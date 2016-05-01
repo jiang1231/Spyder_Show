@@ -123,9 +123,11 @@ class SinaGenerateURLSpider(GenerateURLSpider):
         if r.encoding != 'utf-8':r.encoding='utf-8'
         soup = BeautifulSoup(r.content)
         title = soup.title.string
-
-        date = soup.find(id="pub_date")
-        date = date.string
+        try:
+            date = soup.find(id="pub_date")
+            date = date.string
+        except:
+            date ='none'
 
         content = soup.find(id="artibody")
         content = content.find_all('p')
@@ -137,6 +139,49 @@ class SinaGenerateURLSpider(GenerateURLSpider):
         # print content
         return [title, date, content]
 
+class netEaseGenerateURLSpider(GenerateURLSpider):
+    def __init__(self):
+        pass
+
+    def fliterUrl(self, url):
+        #print url
+        r = requests.get(url)
+        pattern = re.compile(r'<a href="(.*?)".*?', re.S)
+        items = re.findall(pattern, r.content)
+        urlList = [items[i] for i in xrange(len(items)) if u'http://news.163.com' in items[i]]
+        return urlList
+
+    def urlSpider(self, keyword):
+        result = []
+        urlList = self.generateSecondUrl(keyword)
+        #content = self.contentSpider(urlList[0])
+        if len(urlList) != 0:
+            for i in range(len(urlList)):
+                content = self.contentSpider(urlList[i])
+                time.sleep(3)
+                result.append(content)
+        return result
+
+    def contentSpider(self, url):
+        r = requests.get(url)
+        #print r.content
+        if r.encoding != 'utf-8':r.encoding='utf-8'
+        soup = BeautifulSoup(r.content)
+        title = soup.title.string
+        try:
+            date = soup.find(attrs={'class':'ep-time-soure cDGray'})
+            date = date.string
+        except:
+            date = 'none'
+        content = soup.find(id="endText")
+        content = content.find_all('p')
+        try:
+            content = [content[i].string.strip() for i in range(len(content))]
+            content = ''.join(content)
+        except:
+            content = title
+        # print content
+        return [title, date, content]
 
 def main():
     keywords = pretreatment().read_txt('keywords.txt')
@@ -150,6 +195,16 @@ def main():
             result[i] =temp
         pretreatment().writeMatrix(result,'result.txt')
 
+def netEaseMain():
+    keywords = pretreatment().read_txt('keywords.txt')
+    for ii in range(len(keywords)):
+        result = netEaseGenerateURLSpider().urlSpider(keywords[ii])
+        for i in range(len(result)):
+            temp = result[i]
+            temp.append(keywords[ii])
+            result[i] =temp
+        pretreatment().writeMatrix(result,'result.txt')
 
 if __name__ == '__main__':
     main()
+    netEaseMain()
