@@ -42,11 +42,12 @@ class GenerateURL(object):
 		pass
 	def generateFirstUrl(self, keyword, pageNum = 10):
 		urlList = []
-		keyword_encode = quote(keyword)
-		url = 'http://news.baidu.com/ns?word='+keyword_encode
+		#keyword_encode = quote(keyword)
+		url = 'http://news.baidu.com/ns?word='+keyword
 		url += '&pn=20&cl=2&ct=1&tn=news&rn=20&ie=utf-8&bt=0&et=0&rsv_page='
 		for i in range(0, pageNum):
 			urlList.append(url+str(i+1))
+		#print urlList[0]
 		return urlList
 
 	def generateSecondUrl(self, keyword, pageNum = 10):
@@ -68,19 +69,17 @@ class SinaGenerateURL(GenerateURL):
 		pass
 
 	def fliterUrl(self, url):
+		print url
 		r = requests.get(url)
 		pattern = re.compile(r'<a href="(.*?)".*?', re.S)
 		items = re.findall(pattern, r.content)
-		print items
-		print items[-1]
 		urlList = [items[i] for i in xrange(len(items)) if u'http://sports.sina.com' in items[i]]
-		#print urlList[-1]
 		return urlList
 
 
 def main():
 	keywords = pretreatment().read_txt('keywords.txt')
-	keywords = [keyword.decode('utf-8').encode('gb2312') for keyword in keywords]
+	#keywords = [keyword.decode('utf-8').encode('gb2312') for keyword in keywords]
 	#print keywords
 	url = SinaGenerateURL().generateSecondUrl(keywords[0])
 	print url
