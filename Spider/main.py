@@ -41,7 +41,7 @@ class pretreatment(object):
 class GenerateURLSpider(object):
     def __init__(self):
         pass
-    def generateFirstUrl(self, keyword, pageNum = 10):
+    def generateFirstUrl(self, keyword, pageNum = 100):
         urlList = []
         #keyword_encode = quote(keyword)
         url = 'http://news.baidu.com/ns?word='+keyword
@@ -50,7 +50,7 @@ class GenerateURLSpider(object):
             urlList.append(url+str(i+1))
         return urlList
 
-    def generateSecondUrl(self, keyword, pageNum = 10):
+    def generateSecondUrl(self, keyword, pageNum = 100):
         urlList = self.generateFirstUrl(keyword, pageNum)
         secondUrlList = []
         for i in range(len(urlList)):
@@ -112,8 +112,11 @@ class SinaGenerateURLSpider(GenerateURLSpider):
         #content = self.contentSpider(urlList[0])
         if len(urlList) != 0:
             for i in range(len(urlList)):
-                content = self.contentSpider(urlList[i])
-                time.sleep(3)
+                try:
+                    content = self.contentSpider(urlList[i])
+                except:
+                    content = ['','','']
+                time.sleep(0.1)
                 result.append(content)
         return result
 
@@ -157,8 +160,11 @@ class netEaseGenerateURLSpider(GenerateURLSpider):
         #content = self.contentSpider(urlList[0])
         if len(urlList) != 0:
             for i in range(len(urlList)):
-                content = self.contentSpider(urlList[i])
-                time.sleep(3)
+                try:
+                    content = self.contentSpider(urlList[i])
+                except:
+                    content = ['','','']
+                time.sleep(0.1)
                 result.append(content)
         return result
 
@@ -206,5 +212,5 @@ def netEaseMain():
         pretreatment().writeMatrix(result,'result.txt')
 
 if __name__ == '__main__':
-    main()
     netEaseMain()
+    main()
