@@ -1,17 +1,22 @@
 #conding:utf-8
-from HTMLParser import HTMLParser
+import xlrd
 
-def strip_tags(html):
-	from HTMLParser import HTMLParser
-    html = html.strip()
-    html = html.strip("\n")
-    result = []
-    parse = HTMLParser()
-    parse.handle_data = result.append
-    parse.feed(html)
-    parse.close()
-    return "".join(result)
+data = xlrd.open_workbook('result.xlsx')
 
-if __name__ == '__main__':
-	a = strip_tags(u'<span id="pub_date">2014dasd10:28</span>')
-	print a
+table = data.sheets()[0]
+print table
+row = 1
+ 
+col = 1
+ 
+#  0 empty,1 string, 2 number, 3 date, 4 boolean, 5 error
+ctype = 1 
+value = u'string'
+ 
+xf = 0
+ 
+table.put_cell(row, col, ctype, value, xf)
+ 
+table.cell(0,0)
+ 
+table.cell(0,0).value
