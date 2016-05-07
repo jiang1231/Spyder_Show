@@ -1,16 +1,42 @@
-# -*- coding: utf-8 -*-
-import sys,os
-reload(sys)
-sys.setdefaultencoding('utf-8')
-abspath = os.getcwd()
+#coding:utf-8
+
 from bs4 import BeautifulSoup
+import os
+import sys
 import string
 import codecs
 from urllib import urlencode, quote
 import requests
 import re
 import time
-from keywords import keywords
+reload(sys)
+sys.setdefaultencoding('utf-8')
+abspath = os.getcwd()
+
+class pretreatment(object):
+    def __init__(self):
+        pass
+    def read_txt(self, txtPath, coding = 'utf-8'):
+        import codecs
+        f = codecs.open(txtPath,'r',coding).readlines()
+        f[0] = f[0].replace(u"\ufeff",u"")
+        dataset = []
+        for line in f:
+            line = line.replace("\r\n","")
+            line = line.replace("\n","")
+            dataset.append(line)
+        return dataset
+
+    def writeMatrix(self, dataset, Path, coding = "utf-8"):
+        for i in xrange(len(dataset)):
+            temp = dataset[i]
+            temp = [str(temp[j]) for j in xrange(len(temp))]
+            temp = "*****".join(temp)
+            dataset[i] = temp
+        string = "\n".join(dataset)
+        f = open(Path, "a+")
+        line = f.write(string+"\n")
+        f.close()
 
 class GenerateURLSpider(object):
     def __init__(self):
@@ -164,6 +190,9 @@ class netEaseGenerateURLSpider(GenerateURLSpider):
         return [title, date, content]
 
 def main():
+    keywords = pretreatment().read_txt('keywords.txt')
+    #keywords = [keyword.decode('utf-8').encode('gb2312') for keyword in keywords]
+    #print keywords
     for ii in range(len(keywords)):
         result = SinaGenerateURLSpider().urlSpider(keywords[ii])
         for i in range(len(result)):
@@ -172,7 +201,16 @@ def main():
             result[i] =temp
         pretreatment().writeMatrix(result,'result.txt')
 
-
+def netEaseMain():
+    keywords = pretreatment().read_txt('keywords.txt')
+    for ii in range(len(keywords)):
+        result = netEaseGenerateURLSpider().urlSpider(keywords[ii])
+        for i in range(len(result)):
+            temp = result[i]
+            temp.append(keywords[ii])
+            result[i] =temp
+        pretreatment().writeMatrix(result,'result.txt')
 
 if __name__ == '__main__':
-    print keywords
+    netEaseMain()
+    main()
