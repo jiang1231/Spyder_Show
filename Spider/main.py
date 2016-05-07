@@ -11,6 +11,11 @@ import requests
 import re
 import time
 from keywords import keywords
+from pymongo import MongoClient
+import time
+client = MongoClient()
+client = MongoClient('localhost', 27017)
+db = client.news
 
 class GenerateURLSpider(object):
     def __init__(self):
@@ -114,7 +119,7 @@ class SinaGenerateURLSpider(GenerateURLSpider):
         except:
             content = title
         # print content
-        return [title, date, content]
+        return [title, date, content, url]
 
 class netEaseGenerateURLSpider(GenerateURLSpider):
     def __init__(self):
@@ -172,7 +177,11 @@ def main():
             result[i] =temp
         pretreatment().writeMatrix(result,'result.txt')
 
+def spider(keyword):
+	check_keyword = [i for i in keywords if keyword in i]
+	SinaGenerateURLSpider().urlSpider(check_keyword)
 
 
 if __name__ == '__main__':
-    print keywords
+    keyword = u'姚明'
+    spider(keyword)
