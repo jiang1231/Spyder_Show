@@ -4,13 +4,41 @@ import os
 import sys
 import random
 import datetime
+import pymongo
+from pymongo import MongoClient
+import time
+client = MongoClient()
+client = MongoClient('localhost', 27017)
+db = client.news
+
+Title_Cut = 7
+Content_Cut = 14
 
 def create_app():
     _app = Flask(__name__)
 
     @_app.route('/')
     def homepage():
-        return render_template('index.html')
+        #count = db.news.find().count()
+        count = 200
+        find = db.news.find()
+        allNews = []
+        for i in range(count):
+            oneNews = {}
+            oneNews['player'] = find[i]['player']
+            if len(find[i][title]) > 2*Title_Cut:
+                oneNews['title1'] = find[i][title][0:Title_Cut]
+                oneNews['title2'] = find[i][title][Title_Cut:2*Title_Cut]
+            elif len(find[i][title]) > Title_Cut:
+                oneNews['title1'] = find[i][title][0:Title_Cut]
+                oneNews['title2'] = find[i][title][Title_Cut:]
+            else:
+                oneNews['title1'] = find[i][title][0:]
+                oneNews['title2'] = ''
+            
+            allNews.append(find[i])
+        #print len(allNews)
+        return render_template('index.html',allNews=allNews)
 
 
     return _app

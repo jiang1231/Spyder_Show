@@ -8,8 +8,7 @@ client = MongoClient('localhost', 27017)
 db = client.news
 
 #title,link,orgain,content,keywords
-
-if __name__ == '__main__':
+def insert():
 	result = dataset()
 	print len(result),result[0][0]
 	nowtime = str(time.strftime("%Y-%m-%d", time.localtime()))
@@ -27,7 +26,6 @@ if __name__ == '__main__':
 	if str(find) == 'None':
 		print 'hh'
 
-
 	for i in range(len(result)):
 		temp = result[i]
 		find = db.news.find_one({'link':temp[1]})
@@ -42,5 +40,17 @@ if __name__ == '__main__':
 			post = {'insert_time':nowtime,'title':temp[0],'link':temp[1],'orgain':orgain,'news_time':news_time,'content':temp[3],'player':player,'team':team,'sports':sports}
 			db.news.insert_one(post)
 	print 'finished'
+
+
+if __name__ == '__main__':
+	count = db.news.find().count()
+	find = db.news.find()
+	allNews = []
+	print find[0],type(find[0])
+	for i in range(count):
+		allNews.append(find[i])
+	print len(allNews)
+
+
 
 
