@@ -78,13 +78,13 @@
                             <a href="index.html"><i class="fa fa-dashboard fa-fw"></i> 足球新闻<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 <li>
-                                    <a href="index.html">皇马</a>
+                                    <a href="/soccer/mcf">皇马</a>
                                 </li>
                                 <li>
-                                    <a href="index.html">曼联</a>
+                                    <a href="/soccer/manutd">曼联</a>
                                 </li>
                                 <li>
-                                    <a href="index.html">巴萨</a>
+                                    <a href="/soccer/bar">巴萨</a>
                                 </li>
                             </ul>
                             <!-- /.nav-second-level -->
@@ -93,16 +93,13 @@
                             <a href="#"><i class="fa fa-sitemap fa-fw"></i> 篮球新闻<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 <li>
-                                    <a href="#">休斯顿火箭队</a>
+                                    <a href="/basketball/hr">休斯顿火箭队</a>
                                 </li>
                                 <li>
-                                    <a href="#">芝加哥公牛队</a>
-                                </li>
+                                    <a href="/basketball/cb">芝加哥公牛队</a>
+                                </li>                              
                                 <li>
-                                    <a href="#">达斯拉小牛队</a>
-                                </li>                                
-                                <li>
-                                    <a href="#">湖人队</a>
+                                    <a href="/basketball/lal">湖人队</a>
                                 </li>
 <!--                                 <li>
                                     <a href="#">Third Level <span class="fa arrow"></span></a>
@@ -134,7 +131,7 @@
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header">全部新闻</h1>
+                    <h1 class="page-header">{{tips.p1}}</h1>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -143,7 +140,7 @@
                 <div class="col-lg-12">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            全部队伍O(∩_∩)O~~
+                            {{tips.p2}}    {{tips.p3}}
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
@@ -169,9 +166,9 @@
                                         {% for oneNews in allNews %}
                                         <tr class="odd grafeX">
                                         <td class="center">{{oneNews.player}}</td>
-                                        <td>{{oneNews.title}}</td>
-                                        <td>{{oneNews.content}}</td>
-                                        <td>{{oneNews.orgain}}  {{oneNews.news_time}}</td>
+                                        <td class="center">{{oneNews.title1}}<br/>{{oneNews.title2}}</td>
+                                        <td class="center">{{oneNews.content1}}<br/>{{oneNews.content2}}</td>
+                                        <td class="center">{{oneNews.orgain}}<br/>{{oneNews.news_time}}</td>
                                         <td class="center"><a href={{oneNews.link}}>链接</a></td>
                                         </tr>
                                         {% endfor %}
