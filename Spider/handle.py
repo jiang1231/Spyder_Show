@@ -16,7 +16,7 @@ def read_txt(txtPath, coding = 'utf-8'):
         dataset.append(line)
     return dataset
 
-if __name__ == '__main__':
+def dataset():
 	cx = sqlite3.connect('nohandle.db3')
 	cur = cx.cursor()
 	# cur.execute("select * from table")  
@@ -46,9 +46,15 @@ if __name__ == '__main__':
 		if len(i[0]) != 0 and len(i[1]) != 0 and len(i[2]) != 0 and len(i[3]) != 0:
 			if i[4] in keywords:
 				result.append(i)
-				k.append(i[4])
-	print len(result),len(i[4])
+				k.append(i[1])
+	print len(result),len(k),len(set(k))
 	print result[0]
+	return result	
+
+
+if __name__ == '__main__':
+	dataset()
+
 
 
 
