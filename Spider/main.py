@@ -27,23 +27,34 @@ class SpiderKeywords(object):
         return url
 
     def contentSpider(self, content):
+    	#content = content.decode('gb2312')
+    	# print content
         link = content.find('a').get('href')
         print link,type(link)
   #       find = db.news.find_one({'link':temp[1]})
-		# if str(find) == 'None':
+        # if str(find) == 'None':
 
         title = content.a.get_text()
         print title,type(title)
 
-        detail = content.find('div',attrs={"class":'c-summary c-row '})
-        detail = detail.find('p',attrs={'class':'c-author'})
+        detail = content.find('p',attrs={'class':'c-author'})
+        print detail.get_text()
+        # [orgain, news_time] = detail.get_text().split('\xa0\xa0')
+        # print orgain,news_time
+
+
 
         news = content.find('div',attrs={"class":'c-summary c-row '})
-        news = news.get_text()
-        news = str(news).split('&nbsp;&nbsp;')
+        print news.get_text()
+        #news = str(news).split('&nbsp;&nbsp;')
+
+
         nowtime = str(time.strftime("%Y-%m-%d", time.localtime()))
         # post = {'insert_time':nowtime,'title':temp[0],'link':temp[1],'orgain':orgain,'news_time':news_time,'content':temp[3],'player':player,'team':team,'sports':sports}
-        print news
+        post = {'insert_time':nowtime,'link':link,'title':title,'detail':detail}
+        print post
+        #db.news.insert_one(post)
+        #print news
 
 
 
@@ -51,8 +62,28 @@ class SpiderKeywords(object):
     def urlSpider(self, keyword):
         url = self.generateUrl(keyword)
         r = requests.get(url)
+        #print type(r.content)
+        #html = r.content.replace('\xa0','')
+        #print type(html)
         if r.encoding != 'utf-8':r.encoding='utf-8'
-        soup = BeautifulSoup(r.content)
+
+        html = r.content
+        print type(html)
+        if u'&nbsp;&nbsp;' in html:
+        	print 'jjjjjjjjj'
+
+        html.replace(u'&nbsp;&nbsp;','***')
+        if u'&nbsp;&nbsp;' in html:
+        	print 'jjjjjjjjj'
+        html = html.split('&nbsp;&nbsp;')
+        html = '***'.join(html)
+        print len(html)
+        if u'&nbsp;&nbsp;' in html:
+        	print 'jjjjjjjjj'
+        # r.content.replace('&nbsp;&nbsp;','')
+        with open('a.txt','w') as file:
+        	file.write(html)
+        soup = BeautifulSoup(html)
         contents = soup.find_all("div", attrs={"class": "result"})
         print len(contents)
         # print contents[0],type(contents[0])
