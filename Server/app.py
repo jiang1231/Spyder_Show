@@ -268,7 +268,7 @@ def create_app():
             spider_time = file.readline()
         time_now = time.time()
         time_now = int(time_now)-int(spider_time)
-        if time_now < 21600:
+        if time_now > 21600:
             spider.mutispider()
             time_now = time.time()
             time_now = int(time_now)
