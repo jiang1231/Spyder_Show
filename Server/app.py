@@ -264,7 +264,17 @@ def create_app():
 
     @_app.route('/today')
     def todaySpider():
-        spider.spider()
+        with open('time.txt','r') as file:
+            spider_time = file.readline()
+        time_now = time.time()
+        time_now = int(time_now)-int(spider_time)
+        if time_now < 21600:
+            spider.mutispider()
+            time_now = time.time()
+            time_now = int(time_now)
+            with open('time.txt','w') as file:
+                file.write(str(time_now))
+                
         find = db.news.find({"insert_time":"2016-05-21"})
         count = min(find.count(), COUNT)
         allNews = []

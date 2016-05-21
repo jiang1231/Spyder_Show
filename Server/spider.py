@@ -13,6 +13,7 @@ import time
 from keywords import keywords
 from pymongo import MongoClient
 import time
+from multiprocessing.dummy import Pool as ThreadPool
 client = MongoClient()
 client = MongoClient('localhost', 27017)
 db = client.news
@@ -84,7 +85,15 @@ class SpiderKeywords(object):
             for i in range(len(contents)):
                 self.contentSpider(contents[i], keyword)
 
+def mutispider():
+    pool = ThreadPool(8)
+    pool.map(SpiderKeywords().urlSpider, keywords)
+
 def spider():
+    time_now = time.time()
+    time_now = int(time_now)
+    with open('time.txt','w') as file:
+        file.write(str(time_now))    
     for i in range(len(keywords)):
         keyword = keywords[i]
         SpiderKeywords().urlSpider(keyword)
