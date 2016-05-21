@@ -23,81 +23,71 @@ class SpiderKeywords(object):
         pass
     def generateUrl(self, keyword):
         url = 'http://news.baidu.com/ns?word='+keyword
-        url += '&pn=0&cl=2&ct=1&tn=news&rn=20&ie=utf-8&bt=0&et=0'
+        # url += '&pn=0&cl=2&ct=1&tn=news&rn=20&ie=utf-8&bt=0&et=0'
+        url += '&sr=0&cl=2&rn=20&tn=news&ct=0&clk=sortbytime'
         return url
 
-    def contentSpider(self, content):
-    	#content = content.decode('gb2312')
-    	# print content
+    def contentSpider(self, content, keyword):
         link = content.find('a').get('href')
-        print link,type(link)
-  #       find = db.news.find_one({'link':temp[1]})
-        # if str(find) == 'None':
+        # print link,type(link)
+        find = db.news.find_one({'link':link})
+        # find = 'None'
+        if str(find) == 'None':
+            try:
+                title = content.a.get_text()
+            except:
+                title = ''
+            # print title,type(title)
+            try:
+                detail = content.find('p',attrs={'class':'c-author'})
+                # print detail.get_text()
+                [orgain, news_time] = detail.get_text().split('***')
+                # print orgain,news_time,type(orgain)
+                content.find('p',attrs={'class':'c-author'}).string = ''
+            except:
+                orgain, news_time = '',''
 
-        title = content.a.get_text()
-        print title,type(title)
+            try:
+                content.find('span',attrs={'class':'c-info'}).string = ''
+                news = content.find('div',attrs={"class":'c-summary c-row '})
+                news = news.get_text().strip()
+            except:
+                news = ''
+            if news == '':
+                try:
+                    content.find('span',attrs={'class':'c-info'}).string = ''
+                    news = content.find('div',attrs={'class':'c-span18 c-span-last'})
+                    news = news.get_text().strip()
+                except:
+                    news =''
+            print news,'ss'
 
-        detail = content.find('p',attrs={'class':'c-author'})
-        print detail.get_text()
-        # [orgain, news_time] = detail.get_text().split('\xa0\xa0')
-        # print orgain,news_time
-
-
-
-        news = content.find('div',attrs={"class":'c-summary c-row '})
-        print news.get_text()
-        #news = str(news).split('&nbsp;&nbsp;')
-
-
-        nowtime = str(time.strftime("%Y-%m-%d", time.localtime()))
-        # post = {'insert_time':nowtime,'title':temp[0],'link':temp[1],'orgain':orgain,'news_time':news_time,'content':temp[3],'player':player,'team':team,'sports':sports}
-        post = {'insert_time':nowtime,'link':link,'title':title,'detail':detail}
-        print post
-        #db.news.insert_one(post)
-        #print news
-
-
-
+            nowtime = str(time.strftime("%Y-%m-%d", time.localtime()))
+            [player,team,sports] = keyword.split()
+            post = {'insert_time':nowtime,'link':link,'title':title,'orgain':orgain,'news_time':news_time,'content':news,'player':player,'team':team,'sports':sports}
+            print post
+            if news != '' and title != '':
+                db.news.insert_one(post)
+            #print news
 
     def urlSpider(self, keyword):
         url = self.generateUrl(keyword)
         r = requests.get(url)
-        #print type(r.content)
-        #html = r.content.replace('\xa0','')
-        #print type(html)
         if r.encoding != 'utf-8':r.encoding='utf-8'
-
         html = r.content
-        print type(html)
-        if u'&nbsp;&nbsp;' in html:
-        	print 'jjjjjjjjj'
-
         html.replace(u'&nbsp;&nbsp;','***')
-        if u'&nbsp;&nbsp;' in html:
-        	print 'jjjjjjjjj'
         html = html.split('&nbsp;&nbsp;')
         html = '***'.join(html)
-        print len(html)
-        if u'&nbsp;&nbsp;' in html:
-        	print 'jjjjjjjjj'
-        # r.content.replace('&nbsp;&nbsp;','')
-        with open('a.txt','w') as file:
-        	file.write(html)
         soup = BeautifulSoup(html)
         contents = soup.find_all("div", attrs={"class": "result"})
-        print len(contents)
-        # print contents[0],type(contents[0])
-        self.contentSpider(contents[0])
-
-
-
+        if len(contents) != 0:
+            for i in range(len(contents)):
+                self.contentSpider(contents[i], keyword)
 
 def spider():
     for i in range(len(keywords)):
         keyword = keywords[i]
         SpiderKeywords().urlSpider(keyword)
-        break
-
-
+        
 if __name__ == '__main__':
     spider()
