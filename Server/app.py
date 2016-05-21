@@ -10,6 +10,7 @@ import datetime
 import pymongo
 from pymongo import MongoClient
 import time
+import spider
 client = MongoClient()
 client = MongoClient('localhost', 27017)
 db = client.news
@@ -261,6 +262,39 @@ def create_app():
         tips = {'p1':u'篮球新闻','p2':u'芝加哥公牛队','p3':u'最多显示'+str(COUNT)+u'条新闻哦O(∩_∩)O~~'}
         return render_template('index.html',allNews=allNews,tips=tips)
 
+    @_app.route('/today')
+    def todaySpider():
+        spider.spider()
+        find = db.news.find({"insert_time":"2016-05-21"})
+        count = min(find.count(), COUNT)
+        allNews = []
+        for i in range(count):
+            oneNews = {}
+            oneNews['player'] = find[i]['player']
+            if len(find[i]['title']) > 2*Title_Cut:
+                oneNews['title1'] = find[i]['title'][0:Title_Cut]
+                oneNews['title2'] = find[i]['title'][Title_Cut:2*Title_Cut]
+            elif len(find[i]['title']) > Title_Cut:
+                oneNews['title1'] = find[i]['title'][0:Title_Cut]
+                oneNews['title2'] = find[i]['title'][Title_Cut:]
+            else:
+                oneNews['title1'] = find[i]['title'][0:]
+                oneNews['title2'] = ''
+            if len(find[i]['content']) > 2*Content_Cut:
+                oneNews['content1'] = find[i]['content'][0:Content_Cut]
+                oneNews['content2'] = find[i]['content'][Content_Cut:2*Content_Cut]
+            elif len(find[i]['content']) > Title_Cut:
+                oneNews['content1'] = find[i]['content'][0:Title_Cut]
+                oneNews['content2'] = find[i]['content'][Title_Cut:]
+            else:
+                oneNews['content1'] = find[i]['content'][0:]
+                oneNews['content2'] = ''
+            oneNews['link'] = find[i]['link']
+            oneNews['orgain'] = find[i]['orgain']
+            oneNews['news_time'] = find[i]['news_time']
+            allNews.append(oneNews)
+        tips = {'p1':u'今日爬取新闻','p2':u' ','p3':u'最多显示'+str(COUNT)+u'条新闻哦O(∩_∩)O~~'}
+        return render_template('index.html',allNews=allNews,tips=tips)
     return _app
 
 def configure_jinja2(app):
