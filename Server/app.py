@@ -274,8 +274,8 @@ def create_app():
             time_now = int(time_now)
             with open('time.txt','w') as file:
                 file.write(str(time_now))
-                
-        find = db.news.find({"insert_time":"2016-05-21"})
+        nowtime = str(time.strftime("%Y-%m-%d", time.localtime()))        
+        find = db.news.find({"insert_time":nowtime})
         count = min(find.count(), COUNT)
         allNews = []
         for i in range(count):
