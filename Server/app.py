@@ -26,7 +26,7 @@ def create_app():
     def homepage():
         #count = db.news.find().count()
         count = COUNT
-        find = db.news.find()
+        find = db.news.find().sort('insert_time',pymongo.ASCENDING)
         allNews = []
         for i in range(count):
             oneNews = {}
@@ -60,7 +60,7 @@ def create_app():
     @_app.route('/soccer/mcf')
     def mcf():
         #count = db.news.find().count()
-        find = db.news.find({'sports':u'足球','team':u'皇马'})
+        find = db.news.find({'sports':u'足球','team':u'皇马'}).sort('insert_time',pymongo.ASCENDING)
         count = min(find.count(), COUNT)
         allNews = []
         for i in range(count):
@@ -94,7 +94,7 @@ def create_app():
     @_app.route('/soccer/manutd')
     def manutd():
         #count = db.news.find().count()
-        find = db.news.find({'sports':u'足球','team':u'曼联'})
+        find = db.news.find({'sports':u'足球','team':u'曼联'}).sort('insert_time',pymongo.ASCENDING)
         count = min(find.count(), COUNT)
         allNews = []
         for i in range(count):
@@ -129,7 +129,7 @@ def create_app():
     @_app.route('/soccer/bar')
     def bar():
         #count = db.news.find().count()
-        find = db.news.find({'sports':u'足球','team':u'巴萨'})
+        find = db.news.find({'sports':u'足球','team':u'巴萨'}).sort('insert_time',pymongo.ASCENDING)
         count = min(find.count(), COUNT)
         allNews = []
         for i in range(count):
@@ -163,7 +163,7 @@ def create_app():
     @_app.route('/basketball/hr')
     def hr():
         #count = db.news.find().count()
-        find = db.news.find({'sports':u'篮球','team':u'休斯顿火箭队'})
+        find = db.news.find({'sports':u'篮球','team':u'休斯顿火箭队'}).sort('insert_time',pymongo.ASCENDING)
         count = min(find.count(), COUNT)
         allNews = []
         for i in range(count):
@@ -197,7 +197,7 @@ def create_app():
     @_app.route('/basketball/lal')
     def lal():
         #count = db.news.find().count()
-        find = db.news.find({'sports':u'篮球','team':u'湖人队'})
+        find = db.news.find({'sports':u'篮球','team':u'湖人队'}).sort('insert_time',pymongo.ASCENDING)
         count = min(find.count(), COUNT)
         allNews = []
         for i in range(count):
@@ -231,7 +231,7 @@ def create_app():
     @_app.route('/basketball/cb')
     def cb():
         #count = db.news.find().count()
-        find = db.news.find({'sports':u'篮球','team':u'芝加哥公牛队'})
+        find = db.news.find({'sports':u'篮球','team':u'芝加哥公牛队'}).sort('insert_time',pymongo.ASCENDING)
         count = min(find.count(), COUNT)
         allNews = []
         for i in range(count):
